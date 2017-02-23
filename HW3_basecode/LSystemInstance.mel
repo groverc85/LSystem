@@ -1,0 +1,67 @@
+global string $gMainWindow;
+        setParent $gMainWindow;
+        menu -label "LSystemInstance";
+            menuItem -label "Create randomNode Network" -command createRandomNodeNetwork;
+			menuItem -label "Create randomNode Network with user Selection" -command createRandomNodeNetworkWithSelection;
+			menuItem -label "Create InstanceNode Network" -command createInstanceNodeNetwork;
+			menuItem -label "Create InstanceNode Network with user Selection" -command createInstanceNodeNetworkWithSelection;
+            menuItem -divider true;
+
+global proc createRandomNodeNetwork()
+{
+    polySphere;
+    instancer;
+    createNode randomNode;
+    connectAttr pSphere1.matrix instancer1.inputHierarchy[0]; 
+    connectAttr randomNode1.outPoints instancer1.inputPoints; 
+}
+
+global proc createRandomNodeNetworkWithSelection()
+{
+	// user selected geometry
+	string $selectionObj[] = `ls -sl -tr`;
+	string $obj;
+	//if (size($selectionObj) == 1){
+		$obj = $selectionObj[0];
+		instancer;
+		createNode randomNode;
+		connectAttr -f ($obj+".matrix") instancer1.inputHierarchy[0]; 
+		connectAttr randomNode1.outPoints instancer1.inputPoints; 
+	//}
+}
+
+global proc createInstanceNodeNetwork()
+{
+	polyCube;
+	polySphere;
+	instancer;
+	instancer;
+	createNode LSystemInstanceNode;
+	connectAttr pCube1.matrix instancer1.inputHierarchy[0];
+	connectAttr pSphere1.matrix instancer2.inputHierarchy[0]; 
+	connectAttr LSystemInstanceNode1.outputBranches instancer1.inputPoints;
+	connectAttr LSystemInstanceNode1.outputFlowers instancer2.inputPoints;
+}
+
+global proc createInstanceNodeNetworkWithSelection()
+{
+	// user selected geometry
+	string $selectionObj[] = `ls -sl -tr`;
+	string $obj1;
+	string $obj2;
+	$obj1 = $selectionObj[0];
+	$obj2 = $selectionObj[1];
+	instancer;
+	instancer;
+	createNode LSystemInstanceNode;
+	connectAttr -f ($obj1+".matrix") instancer1.inputHierarchy[0]; 
+	connectAttr -f ($obj2+".matrix") instancer2.inputHierarchy[0]; 
+	connectAttr LSystemInstanceNode.outputBranches instancer1.inputPoints;
+	connectAttr LSystemInstanceNode.outputFlowers instancer2.inputPoints;
+}
+
+
+global proc deleteLSystemUI()
+{
+    print "deleteLSystemUI";
+}
